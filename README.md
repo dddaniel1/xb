@@ -38,10 +38,14 @@ xb 把微博重写成 X 风格的专注阅读界面：去广告、去干扰、�
 ## 安装
 
 1. 在浏览器安装 [Tampermonkey](https://www.tampermonkey.net/)（Violentmonkey 也可以）。
-2. 直接打开安装地址：
-   <https://raw.githubusercontent.com/dddaniel1/xb/main/dist/xb.user.js>
-   Tampermonkey 会自动弹出安装页。也可以在本仓库执行 `pnpm install && pnpm build` 后，把 `dist/xb.user.js` 拖进浏览器窗口。
+2. 二选一安装：
+   - **Greasy Fork（推荐，自动更新）**：<https://greasyfork.org/zh-CN/scripts/603092-xb>
+   - **GitHub 直装**：<https://raw.githubusercontent.com/dddaniel1/xb/main/dist/xb.user.js>
+     也可以在本仓库执行 `pnpm install && pnpm build` 后，把 `dist/xb.user.js` 拖进浏览器窗口。
 3. 脚本头部已配置 `@updateURL` / `@downloadURL`，以后仓库更新版本时 Tampermonkey 会自动检查更新。
+
+> Greasy Fork 限制脚本不超过 2 MiB 且不允许最小化代码，所以 GF 版使用 `dist/xb.cr.gf.user.js`：完整代码 gzip 后以 base64 内嵌，运行时用 `DecompressionStream` 解压执行。GitHub 版 `dist/xb.user.js` 则是普通的可读单文件构建。
+
 4. 打开 <https://weibo.com/>，脚本会在页面加载时接管界面。
 
 > 首次使用「话题搜索 / 未读提醒」时，脚本会请求 `m.weibo.cn`，Tampermonkey 可能弹窗询问 `GM_cookie` 权限，允许即可。
@@ -69,6 +73,7 @@ xb 把微博重写成 X 风格的专注阅读界面：去广告、去干扰、�
 pnpm install
 pnpm dev        # 启动 Vite，并在浏览器打开 userscript 安装页（支持热更新）
 pnpm build      # 产出 dist/xb.user.js 与 dist/xb.meta.js
+pnpm build:cr   # 额外产出 Greasy Fork 用的自解压 dist/xb.cr.user.js
 pnpm compile    # TypeScript 类型检查
 pnpm test:unit  # Vitest
 pnpm smoke      # 用 jsdom 加载构建产物做冒烟测试

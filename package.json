@@ -1,6 +1,6 @@
 {
   "name": "xb-userscript",
-  "version": "1.27.5",
+  "version": "1.27.6",
   "description": "xb — Redesign Weibo, like X but even better. Tampermonkey userscript.",
   "keywords": [
     "browser",
@@ -22,6 +22,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:all": "vite build && node scripts/build-compressed.mjs",
+    "build:cr": "node scripts/build-compressed.mjs",
     "compile": "tsc --noEmit",
     "dev": "vite",
     "lint:check": "oxfmt --no-error-on-unmatched-pattern && oxlint --fix --no-error-on-unmatched-pattern",

@@ -16,6 +16,7 @@ motion (same as framer-motion), Zustand, TanStack Query, and `@reactuses/core`.
 ```bash
 pnpm dev        # Vite dev server + userscript dev build (auto-install prompt)
 pnpm build      # dist/xb.user.js + dist/xb.meta.js
+pnpm build:cr   # Greasy Fork self-extracting dist/xb.cr.user.js
 pnpm test:unit  # Run unit tests (Vitest + jsdom)
 pnpm test:watch # Run tests in watch mode
 pnpm compile    # TypeScript type check only
@@ -142,8 +143,11 @@ const followMutation = useMutation({
   `GM_xmlhttpRequest`, `GM_cookie`, and the page-window grant.
 - Only `https://weibo.com/*` and `https://www.weibo.com/*` are matched. The
   old `s.weibo.com` content script was disabled upstream.
-- The build is a single ~7 MB file (React + video.js + dash.js); SystemJS is
-  inlined so there are no `@require` dependencies.
+- The GitHub build is ~3.5 MB minified (React + video.js + dash.js); SystemJS
+  is inlined so there are no `@require` dependencies.
+- Greasy Fork caps scripts at 2 MiB and forbids minified code. `scripts/build-compressed.mjs`
+  gzips the full bundle into `dist/xb.cr.gf.user.js` (base64 + `DecompressionStream`),
+  which is the artifact published at <https://greasyfork.org/zh-CN/scripts/603092-xb>.
 - Rating build env: `XB_SIGN_SECRET` / `VITE_XB_SIGN_SECRET`; optional
   `XB_SERVER_URL`. These signing secrets are bundled into the script and should
   be treated as compatibility-only, not as a real security boundary.

@@ -31,10 +31,13 @@ single `xb.user.js` file.
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) (Violentmonkey works
    too).
-2. Open the install URL:
-   <https://raw.githubusercontent.com/dddaniel1/xb/main/dist/xb.user.js>
-   Tampermonkey will show the install page. Alternatively run
-   `pnpm install && pnpm build` and drag `dist/xb.user.js` into the browser.
+2. Install from either source:
+   - **Greasy Fork (recommended, auto-updates)**: <https://greasyfork.org/en/scripts/603092-xb>
+   - **GitHub direct**: <https://raw.githubusercontent.com/dddaniel1/xb/main/dist/xb.user.js>
+
+   Alternatively run `pnpm install && pnpm build` and drag `dist/xb.user.js`
+   into the browser.
+
 3. The header includes `@updateURL` / `@downloadURL`, so Tampermonkey checks this
    fork for new versions automatically.
 4. Visit <https://weibo.com/>.

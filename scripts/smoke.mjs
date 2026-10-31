@@ -12,7 +12,8 @@ import { readFileSync } from 'node:fs'
 
 import { JSDOM } from 'jsdom'
 
-const bundle = readFileSync(new URL('../dist/xb.user.js', import.meta.url), 'utf8')
+const bundlePath = process.env.SMOKE_FILE || new URL('../dist/xb.user.js', import.meta.url)
+const bundle = readFileSync(bundlePath, 'utf8')
 
 const dom = new JSDOM(
   `<!doctype html><html><head></head><body>
@@ -52,6 +53,10 @@ class StubObserver {
 }
 window.ResizeObserver = StubObserver
 window.IntersectionObserver = StubObserver
+// Used by the compressed build's self-extracting loader.
+window.DecompressionStream = globalThis.DecompressionStream
+window.Response = globalThis.Response
+window.Blob = globalThis.Blob
 window.scrollTo = () => {}
 window.Element.prototype.scrollIntoView = () => {}
 window.Element.prototype.animate = () => ({
