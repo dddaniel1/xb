@@ -106,6 +106,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'es2022',
+      minify: 'oxc',
       cssCodeSplit: false,
       // A userscript must be a single file: inline every `import()` that the
       // app uses for lazy routes/dialogs instead of emitting chunks.

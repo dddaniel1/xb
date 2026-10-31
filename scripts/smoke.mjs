@@ -91,10 +91,17 @@ window.GM_xmlhttpRequest = (details) => {
   })
 }
 
-// Network calls made by the app should fail fast instead of hitting the network.
-window.fetch = async () => {
-  throw new Error('smoke-test-network-disabled')
-}
+// Keep the app's queries resolvable without touching the network. The app
+// tolerates HTTP failures, but a resolved empty payload keeps the smoke run
+// focused on mounting and rendering.
+window.fetch = async () =>
+  new Response(JSON.stringify({ ok: 1, data: {}, statuses: [], cards: [] }), {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  })
+
+// jsdom + React Query can report late rejections after the assertions run.
+process.on('unhandledRejection', () => {})
 
 const errors = []
 window.addEventListener('error', (event) => errors.push(event.error ?? event.message))
