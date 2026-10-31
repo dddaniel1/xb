@@ -20,6 +20,7 @@
 
 [![CI](https://github.com/dddaniel1/xb/actions/workflows/test.yml/badge.svg)](https://github.com/dddaniel1/xb/actions/workflows/test.yml)
 [![License](https://img.shields.io/github/license/dddaniel1/xb)](https://github.com/dddaniel1/xb/blob/main/LICENSE)
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-安装-670000)](https://greasyfork.org/zh-CN/scripts/603092-xb)
 
 [![Tampermonkey](https://img.shields.io/badge/userscript-Tampermonkey-000000?logo=tampermonkey&logoColor=white)](https://www.tampermonkey.net/)
 [![vite-plugin-monkey](https://img.shields.io/badge/build-vite--plugin--monkey-646CFF)](https://github.com/lisonge/vite-plugin-monkey)
