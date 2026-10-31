@@ -1,6 +1,6 @@
 {
   "name": "xb-userscript",
-  "version": "1.27.6",
+  "version": "1.27.7",
   "description": "xb — Redesign Weibo, like X but even better. Tampermonkey userscript.",
   "keywords": [
     "browser",

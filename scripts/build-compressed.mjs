@@ -11,6 +11,10 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 
+const GF_NAME = 'xb — 微博 X 风格阅读（去广告 · 清爽时间线 · 媒体下载）'
+const GF_DESCRIPTION =
+  '把 weibo.com 重写成 X 风格的专注阅读界面：去广告与推荐干扰、清爽时间线、图片/视频查看与下载、生图导出、自定义主题和字体。开源项目 nnecec/xb 的 Tampermonkey 版。'
+
 const dist = fileURLToPath(new URL('../dist/', import.meta.url))
 const source = readFileSync(`${dist}xb.user.js`, 'utf8')
 
@@ -23,10 +27,17 @@ const body = source.slice(metadataMatch[0].length)
 const payload = gzipSync(Buffer.from(body, 'utf8'), { level: 9 }).toString('base64')
 
 // Keep the metadata but replace the update URLs with the compressed artifact.
-function rewriteMetadata({ withUpdateUrls }) {
-  const lines = metadata.split('\n').filter((line) => {
-    return line !== '// ==/UserScript==' && !/^\/\/ @(downloadURL|updateURL)\s/.test(line)
-  })
+function rewriteMetadata({ withUpdateUrls, gf = false }) {
+  const lines = metadata
+    .split('\n')
+    .filter((line) => {
+      return line !== '// ==/UserScript==' && !/^\/\/ @(downloadURL|updateURL)\s/.test(line)
+    })
+    .map((line) => {
+      if (gf && line.startsWith('// @name ')) return `// @name         ${GF_NAME}`
+      if (gf && line.startsWith('// @description ')) return `// @description  ${GF_DESCRIPTION}`
+      return line
+    })
 
   if (withUpdateUrls) {
     lines.splice(
@@ -67,7 +78,7 @@ const loader = (meta) => `${meta}
 `
 
 const github = loader(rewriteMetadata({ withUpdateUrls: true }))
-const gf = loader(rewriteMetadata({ withUpdateUrls: false }))
+const gf = loader(rewriteMetadata({ withUpdateUrls: false, gf: true }))
 
 writeFileSync(`${dist}xb.cr.user.js`, github)
 writeFileSync(`${dist}xb.cr.gf.user.js`, gf)

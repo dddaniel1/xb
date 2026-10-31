@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xb
 // @namespace    https://github.com/dddaniel1/xb
-// @version      1.27.6
+// @version      1.27.7
 // @author       nnecec
 // @description  xb — Redesign Weibo, like X but even better. 油猴脚本版。
 // @license      GPL-3.0
