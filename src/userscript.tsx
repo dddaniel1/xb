@@ -12,9 +12,26 @@ import sonnerStyles from 'sonner/dist/styles.css?raw'
 
 interface XbBootWindow extends Window {
   __xbUserscriptBooted?: boolean
+  __xbVersion?: string
 }
 
 const page = getPageWindow() as XbBootWindow
+
+function parseVersion(version: string) {
+  return version.split('.').map((part) => Number.parseInt(part, 10) || 0)
+}
+
+function isNewerVersion(candidate: string, current: string) {
+  const left = parseVersion(candidate)
+  const right = parseVersion(current)
+
+  for (let index = 0; index < Math.max(left.length, right.length); index++) {
+    const difference = (left[index] ?? 0) - (right[index] ?? 0)
+    if (difference !== 0) return difference > 0
+  }
+
+  return false
+}
 
 function injectAntiFlashStyle() {
   const style = document.createElement('style')
@@ -89,10 +106,21 @@ function boot() {
 }
 
 // A page can end up with more than one copy of the script (an old version left
-// enabled in the manager, or the same userscript installed twice). Only the
-// first copy may mount: two React roots race, and one of the hosts can be left
-// empty or blank.
-if (!page.__xbUserscriptBooted) {
+// enabled in the manager, or the same userscript installed twice). Only one
+// copy may mount, and a newer copy must be able to take over from an older one
+// after a userscript update.
+const runningVersion = page.__xbVersion
+const shouldBoot =
+  !page.__xbUserscriptBooted ||
+  (runningVersion ? isNewerVersion(__XB_VERSION__, runningVersion) : true)
+
+if (shouldBoot) {
   page.__xbUserscriptBooted = true
+  page.__xbVersion = __XB_VERSION__
+
+  for (const existing of document.querySelectorAll('xb-shell-userscript')) {
+    existing.remove()
+  }
+
   boot()
 }

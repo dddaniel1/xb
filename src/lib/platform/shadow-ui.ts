@@ -45,7 +45,8 @@ export function createShadowRootUi({
 
   const container = document.createElement('div')
   container.className = 'xb-app-root'
-  container.style.cssText = 'display:block;min-height:100vh;'
+  container.style.cssText =
+    'display:block;min-height:100vh;color:var(--foreground);background-color:var(--background);'
   shadow.appendChild(container)
 
   anchor.insertBefore(host, anchor.firstChild)
