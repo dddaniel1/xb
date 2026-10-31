@@ -6,7 +6,7 @@ import {
   type QueryKey,
 } from '@tanstack/react-query'
 import { MotionConfig } from 'motion/react'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router'
 
 import { Toaster } from '@/components/ui/sonner'
@@ -15,39 +15,16 @@ import { useAppSettings } from '@/lib/app-settings-store'
 import { AppShell } from '@/lib/weibo/app/app-shell'
 import { usePrewarmEmoticonConfig } from '@/lib/weibo/app/emoticon-query'
 import { AppErrorBoundary } from '@/lib/weibo/app/error-boundary'
-
-const ExplorePage = lazy(() =>
-  import('@/lib/weibo/pages/explore-page').then((m) => ({ default: m.ExplorePage })),
-)
-const FavoritesPage = lazy(() =>
-  import('@/lib/weibo/pages/favorites-page').then((m) => ({ default: m.FavoritesPage })),
-)
-const FollowFansPage = lazy(() =>
-  import('@/lib/weibo/pages/follow-fans-page').then((m) => ({ default: m.FollowFansPage })),
-)
-const HomeTimelinePage = lazy(() =>
-  import('@/lib/weibo/pages/home-timeline-page').then((m) => ({ default: m.HomeTimelinePage })),
-)
-const LikedStatusesPage = lazy(() =>
-  import('@/lib/weibo/pages/liked-statuses-page').then((m) => ({
-    default: m.LikedStatusesPage,
-  })),
-)
-const NotificationsPage = lazy(() =>
-  import('@/lib/weibo/pages/notifications-page').then((m) => ({ default: m.NotificationsPage })),
-)
-const ProfilePage = lazy(() =>
-  import('@/lib/weibo/pages/profile-page').then((m) => ({ default: m.ProfilePage })),
-)
-const StatusDetailPage = lazy(() =>
-  import('@/lib/weibo/pages/status-detail-page').then((m) => ({ default: m.StatusDetailPage })),
-)
-const HistoryPage = lazy(() =>
-  import('@/lib/weibo/pages/history-page').then((m) => ({ default: m.HistoryPage })),
-)
-const TopicPage = lazy(() =>
-  import('@/lib/weibo/pages/topic-page').then((m) => ({ default: m.TopicPage })),
-)
+import { ExplorePage } from '@/lib/weibo/pages/explore-page'
+import { FavoritesPage } from '@/lib/weibo/pages/favorites-page'
+import { FollowFansPage } from '@/lib/weibo/pages/follow-fans-page'
+import { HistoryPage } from '@/lib/weibo/pages/history-page'
+import { HomeTimelinePage } from '@/lib/weibo/pages/home-timeline-page'
+import { LikedStatusesPage } from '@/lib/weibo/pages/liked-statuses-page'
+import { NotificationsPage } from '@/lib/weibo/pages/notifications-page'
+import { ProfilePage } from '@/lib/weibo/pages/profile-page'
+import { StatusDetailPage } from '@/lib/weibo/pages/status-detail-page'
+import { TopicPage } from '@/lib/weibo/pages/topic-page'
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({

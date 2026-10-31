@@ -18,5 +18,6 @@
   },
   "env": {
     "builtin": true
-  }
+  },
+  "ignorePatterns": ["dist/**"]
 }

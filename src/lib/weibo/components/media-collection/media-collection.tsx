@@ -2,7 +2,6 @@ import { useReducedMotion } from 'motion/react'
 import { memo, useMemo } from 'react'
 import { PhotoProvider } from 'react-photo-view'
 
-import 'react-photo-view/dist/react-photo-view.css'
 import { getUiPortalContainer } from '@/components/ui/portal'
 import { useAppSettings } from '@/lib/app-settings-store'
 import { cn } from '@/lib/utils'

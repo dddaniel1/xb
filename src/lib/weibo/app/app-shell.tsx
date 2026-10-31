@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router'
 
 import type { HomeTab } from '@/lib/app-settings'
@@ -8,6 +8,7 @@ import { RewritePausedCard, ShellFrame } from '@/lib/weibo/app/app-shell-layout'
 import { AuthRequiredDialog } from '@/lib/weibo/components/auth-required-dialog'
 import { CommentModal } from '@/lib/weibo/components/comment-modal'
 import { ComposeDialog } from '@/lib/weibo/components/compose-dialog'
+import { GenImageDialog } from '@/lib/weibo/components/gen-image-dialog'
 import { GenImageDialogProvider } from '@/lib/weibo/components/gen-image-dialog-context'
 import { SettingsDialog } from '@/lib/weibo/components/settings-dialog'
 import { type StatusCardHost, StatusCardHostProvider } from '@/lib/weibo/components/status-card'
@@ -18,10 +19,6 @@ import type { StatusDetailNavigationItem } from '@/lib/weibo/models/feed'
 import { homeTimelinePathFromTab } from '@/lib/weibo/route/home-timeline-path'
 import { useWeiboPage } from '@/lib/weibo/route/use-weibo-page'
 import { onUnauthorized } from '@/lib/weibo/services/auth-events'
-
-const GenImageDialog = lazy(() =>
-  import('@/lib/weibo/components/gen-image-dialog').then((m) => ({ default: m.GenImageDialog })),
-)
 
 export interface AppShellContext {
   page: ReturnType<typeof useWeiboPage>

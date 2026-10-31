@@ -2,7 +2,7 @@
   <img src="./public/icon/rounded_image.png" alt="xb" width="96" />
 </p>
 
-<h1 align="center">xb</h1>
+<h1 align="center">xb · userscript</h1>
 
 <p align="center">
   <strong>Redesign Weibo</strong>
@@ -13,69 +13,82 @@
 <p align="right">
   <a href="./README.md">中文</a>
   ·
-  <a href="https://xb-extension.vercel.app/">Website</a>
+  <a href="https://github.com/dddaniel1/xb">this fork</a>
+  ·
+  <a href="https://github.com/nnecec/xb">upstream</a>
 </p>
 
-[![CI](https://github.com/nnecec/xb/actions/workflows/test.yml/badge.svg)](https://github.com/nnecec/xb/actions/workflows/test.yml)
-[![License](https://img.shields.io/github/license/nnecec/xb)](https://github.com/nnecec/xb/blob/main/LICENSE)
-[![Release](https://img.shields.io/github/v/release/nnecec/xb)](https://github.com/nnecec/xb/releases)
-[![Stars](https://img.shields.io/github/stars/nnecec/xb)](https://github.com/nnecec/xb/stargazers)
-[![Issues](https://img.shields.io/github/issues/nnecec/xb)](https://github.com/nnecec/xb/issues)
-[![Last commit](https://img.shields.io/github/last-commit/nnecec/xb)](https://github.com/nnecec/xb/commits/main)
+xb rewrites weibo.com into a focused, X-style reading experience: no ads, no
+noise, no visual clutter.
 
-[![Chrome Web Store version](https://img.shields.io/chrome-web-store/v/ffhppkcianllofhhjohbfbobjfppbeao?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/xb/ffhppkcianllofhhjohbfbobjfppbeao)
-[![Chrome Web Store users](https://img.shields.io/chrome-web-store/users/ffhppkcianllofhhjohbfbobjfppbeao?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/xb/ffhppkcianllofhhjohbfbobjfppbeao)
-[![Firefox Add-ons version](https://img.shields.io/amo/v/xb?logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/xb/)
-[![Firefox Add-ons users](https://img.shields.io/amo/users/xb?logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/xb/)
-[![Edge Add-ons version](https://img.shields.io/badge/dynamic/json?label=microsoft%20edge%20add-on&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fmojlbnkiahdmnfaffmelfcefohpfjjla)](https://microsoftedge.microsoft.com/addons/detail/xb/mojlbnkiahdmnfaffmelfcefohpfjjla)
-[![Landing page](https://img.shields.io/badge/website-xb--extension.vercel.app-000000?logo=vercel&logoColor=white)](https://xb-extension.vercel.app/)
-
-[![Bun](https://img.shields.io/badge/bun-1.3.14-000000?logo=bun&logoColor=white)](https://bun.sh)
-[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-7.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![WXT](https://img.shields.io/badge/WXT-0.21-000000)](https://wxt.dev)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-
----
-
-![preview](./assets/xb_1.9.0.webp)
-
-xb strips away the noise and gives you a focused, distraction-free reading
-experience — similar to X.
-
-xb is a browser extension. Once installed, simply browse Weibo as usual and enjoy
-the beautifully redesigned interface.
-
-👉 Screenshots and more: [xb website](https://xb-extension.vercel.app/)
+This repository is the **Tampermonkey userscript version** of
+[nnecec/xb](https://github.com/nnecec/xb). The UI, data layer and features are
+the same; the build moved from WXT (Manifest V3 extension) to
+[vite-plugin-monkey](https://github.com/lisonge/vite-plugin-monkey), producing a
+single `xb.user.js` file.
 
 ## Install
 
-| Browser | Link                                                                                                  |
-| ------- | ----------------------------------------------------------------------------------------------------- |
-| Chrome  | [Chrome Web Store](https://chromewebstore.google.com/detail/xb/ffhppkcianllofhhjohbfbobjfppbeao)      |
-| Firefox | [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/xb/)                                 |
-| Edge    | [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/xb/mojlbnkiahdmnfaffmelfcefohpfjjla) |
+1. Install [Tampermonkey](https://www.tampermonkey.net/) (Violentmonkey works
+   too).
+2. Open the install URL:
+   <https://raw.githubusercontent.com/dddaniel1/xb/main/dist/xb.user.js>
+   Tampermonkey will show the install page. Alternatively run
+   `pnpm install && pnpm build` and drag `dist/xb.user.js` into the browser.
+3. The header includes `@updateURL` / `@downloadURL`, so Tampermonkey checks this
+   fork for new versions automatically.
+4. Visit <https://weibo.com/>.
+
+> The first time topic search or unread reminders run, Tampermonkey may ask for
+> `GM_cookie` permission because the script reads the `m.weibo.cn` XSRF cookie.
 
 ## Features
 
-1. ✨ **X like Style** — Clean, reading-first.
-2. 🔓 **Fully Open Source** — Auditable code; network requests and data use are
-   documented in the [privacy policy](./PRIVACY_POLICY.md).
-3. 🎯 **Focus on Reading** — Distraction-free, clearly feed.
-4. 🚫 **Fewer Interruptions** — Hides stickers, ads, and other distractions by
-   default; the supertopic card is optional.
-5. 🆓 **Everything is Free** - No paid features.
-6. 📷 **Take a shot** - Export Weibo as an image with multiple card templates.
-7. 🔤 **Custom Font** - Choose from system fonts or downloadable open-source
-   fonts.
-8. 🎨 **Custom Theme** — Customize theme colors. See
-   [Tutorial](https://github.com/nnecec/xb/discussions/54).
-9. 📅 **Browsing History** — The history is recorded locally.
-10. ⬇️ **Free to downloads** - Supports download and batch download of Weibo
-    images and videos.
+1. ✨ **X-style layout** — clean, reading-first
+2. 🔓 **Fully open source**
+3. 🎯 **Focused feed** — no distractions
+4. 🚫 **Less noise** — media and ads hidden by default
+5. 🆓 **Free** — no paid tier
+6. 📷 **Image export** — render posts as images with multiple card templates
+7. 🔤 **Custom fonts** — system fonts and downloadable open-source fonts
+8. 🎨 **Custom themes**
+9. 📅 **Local browsing history**
+10. ⬇️ **Media download** — single and batch downloads
+
+Settings live in the xb panel at the bottom-right of the page.
+
+## Development
+
+Requires Node.js ≥ 20 and pnpm.
+
+```bash
+pnpm install
+pnpm dev        # Vite dev server + userscript dev build (hot reload)
+pnpm build      # dist/xb.user.js + dist/xb.meta.js
+pnpm compile    # type check
+pnpm test:unit  # Vitest
+pnpm smoke      # jsdom smoke test against the built bundle
+```
+
+During `pnpm dev`, Tampermonkey installs a temporary `dev:` prefixed script
+pointed at the Vite server. Reload weibo.com to pick up changes.
+
+## Differences from the extension
+
+| Capability     | Extension                           | Userscript                          |
+| -------------- | ----------------------------------- | ----------------------------------- |
+| Install        | Browser stores                      | Tampermonkey                        |
+| Build          | WXT / Manifest V3                   | vite-plugin-monkey / Vite           |
+| Settings       | `chrome.storage.local`              | `GM_getValue` / `GM_setValue`       |
+| Weibo API      | page-context bridge + postMessage   | axios + `GM_xmlhttpRequest` adapter |
+| Media download | background SW + DNR headers         | `GM_xmlhttpRequest` to the CDN      |
+| m.weibo.cn     | background proxy + `chrome.cookies` | `GM_xmlhttpRequest` + `GM_cookie`   |
+| Isolation      | extension Shadow Root               | native Shadow Root                  |
+| Artifact       | extension zip                       | single `xb.user.js` (~7 MB)         |
 
 ## Credits
 
+- Original author [nnecec](https://github.com/nnecec) and
+  [xb](https://github.com/nnecec/xb)
 - Inspired by [BewlyBewly](https://github.com/BewlyBewly/BewlyBewly) and
   [BewlyCat](https://github.com/keleus/BewlyCat)
-- [Linux Do](https://linux.do/) a friendly community

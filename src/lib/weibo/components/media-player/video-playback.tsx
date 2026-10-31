@@ -20,9 +20,6 @@ import {
 import type { PlayableVideoMedia, VideoPlaybackMedia } from './video-playback-types'
 import { VideoPlayerSkin } from './video-player-skin'
 
-import '@videojs/react/video/skin.css'
-import './video-player.css'
-
 interface VideoDownloadAction {
   url: string
   filename?: string

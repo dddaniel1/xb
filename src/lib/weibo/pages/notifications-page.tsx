@@ -9,7 +9,12 @@ import { useAppShellContext } from '@/lib/weibo/app/app-shell-layout'
 import { NotificationList } from '@/lib/weibo/components/notification-list'
 import { PageErrorState, PageLoadingState } from '@/lib/weibo/components/page-state'
 import { TimelineTopBar, type TimelineTopBarOption } from '@/lib/weibo/components/timeline-top-bar'
-import { NOTIFICATION_INFINITE_QUERY_MAX_PAGES } from '@/lib/weibo/data/weibo-data'
+import {
+  loadComments,
+  loadLikes,
+  loadMentions,
+  NOTIFICATION_INFINITE_QUERY_MAX_PAGES,
+} from '@/lib/weibo/data/weibo-data'
 import type { NotificationItem } from '@/lib/weibo/models/notification'
 import type { NotificationTab } from '@/lib/weibo/route/page-descriptor'
 import { useWeiboPage } from '@/lib/weibo/route/use-weibo-page'
@@ -115,15 +120,12 @@ export function NotificationsPage() {
     queryKey: ['weibo', 'notifications', activeTab],
     queryFn: async ({ pageParam }) => {
       if (activeTab === 'mentions') {
-        const { loadMentions } = await import('@/lib/weibo/data/weibo-data')
         return loadMentions(pageParam)
       }
       if (activeTab === 'comments') {
-        const { loadComments } = await import('@/lib/weibo/data/weibo-data')
         return loadComments(pageParam)
       }
       if (activeTab === 'likes') {
-        const { loadLikes } = await import('@/lib/weibo/data/weibo-data')
         return loadLikes(pageParam)
       }
       return { items: [], nextCursor: null }

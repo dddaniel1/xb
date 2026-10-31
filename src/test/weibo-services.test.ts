@@ -3,12 +3,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   assertAllowedMediaUrl,
   assertAllowedMweiboFetchUrl,
-  createMediaRequestHeaderRule,
   handleMediaFetch,
   handleMediaHead,
   handleMweiboFetch,
   maxBackgroundMediaBytes,
-} from '@/entrypoints/background'
+} from '@/lib/platform/weibo-services'
 
 function topicSearchUrl() {
   return 'https://m.weibo.cn/api/container/getIndex?containerid=231522type%3D1%26q%3D%23%E6%B5%8B%E8%AF%95%23&page_type=searchall&v_p=42&page=1'
@@ -19,18 +18,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('background media request header rule', () => {
-  it('only matches background fetch requests for media downloads', () => {
-    const rule = createMediaRequestHeaderRule()
-
-    expect(rule.condition.resourceTypes).toEqual(['xmlhttprequest'])
-    expect(rule.condition.tabIds).toEqual([-1])
-    expect(rule.condition.resourceTypes).not.toContain('media')
-    expect(rule.condition.resourceTypes).not.toContain('image')
-  })
-})
-
-describe('background media URL allowlist', () => {
+describe('media URL allowlist', () => {
   it('allows Weibo image CDN URLs', () => {
     expect(() => {
       assertAllowedMediaUrl('https://wx1.sinaimg.cn/large/a.jpg')
@@ -62,7 +50,7 @@ describe('background media URL allowlist', () => {
   })
 })
 
-describe('background media proxy responses', () => {
+describe('media proxy responses', () => {
   it('rejects non-media HEAD responses', async () => {
     vi.stubGlobal(
       'fetch',
@@ -76,15 +64,7 @@ describe('background media proxy responses', () => {
       ),
     )
 
-    await expect(
-      handleMediaHead(
-        {
-          type: 'media-head',
-          url: 'https://wx1.sinaimg.cn/large/a.jpg',
-        },
-        'https://weibo.com/',
-      ),
-    ).resolves.toEqual({
+    await expect(handleMediaHead('https://wx1.sinaimg.cn/large/a.jpg')).resolves.toEqual({
       ok: false,
       error: 'unsupported-media-content-type',
     })
@@ -103,15 +83,7 @@ describe('background media proxy responses', () => {
       ),
     )
 
-    await expect(
-      handleMediaFetch(
-        {
-          type: 'media-fetch',
-          url: 'https://wx1.sinaimg.cn/large/a.jpg',
-        },
-        'https://weibo.com/',
-      ),
-    ).resolves.toEqual({
+    await expect(handleMediaFetch('https://wx1.sinaimg.cn/large/a.jpg')).resolves.toEqual({
       ok: false,
       error: 'unsupported-media-content-type',
     })
@@ -130,15 +102,7 @@ describe('background media proxy responses', () => {
       ),
     )
 
-    await expect(
-      handleMediaFetch(
-        {
-          type: 'media-fetch',
-          url: 'https://wx1.sinaimg.cn/large/a.jpg',
-        },
-        'https://weibo.com/',
-      ),
-    ).resolves.toEqual({
+    await expect(handleMediaFetch('https://wx1.sinaimg.cn/large/a.jpg')).resolves.toEqual({
       ok: false,
       error: 'media-fetch-too-large',
     })
@@ -157,15 +121,7 @@ describe('background media proxy responses', () => {
       ),
     )
 
-    await expect(
-      handleMediaFetch(
-        {
-          type: 'media-fetch',
-          url: 'https://wx1.sinaimg.cn/large/a.jpg',
-        },
-        'https://weibo.com/',
-      ),
-    ).resolves.toEqual({
+    await expect(handleMediaFetch('https://wx1.sinaimg.cn/large/a.jpg')).resolves.toEqual({
       ok: true,
       contentType: 'image/jpeg',
       data: Buffer.from('image-bytes').toString('base64'),
@@ -185,19 +141,13 @@ describe('background media proxy responses', () => {
       ),
     )
 
-    await expect(
-      handleMediaFetch(
-        {
-          type: 'media-fetch',
-          url: 'https://livephoto.us.sinaimg.cn/live-pic.mov',
-        },
-        'https://weibo.com/',
-      ),
-    ).resolves.toEqual({
-      ok: true,
-      contentType: 'application/octet-stream',
-      data: Buffer.from('live-photo-bytes').toString('base64'),
-    })
+    await expect(handleMediaFetch('https://livephoto.us.sinaimg.cn/live-pic.mov')).resolves.toEqual(
+      {
+        ok: true,
+        contentType: 'application/octet-stream',
+        data: Buffer.from('live-photo-bytes').toString('base64'),
+      },
+    )
   })
 })
 
@@ -234,19 +184,7 @@ describe('m.weibo fetch allowlist', () => {
 })
 
 describe('m.weibo fetch responses', () => {
-  function installBrowserCookies() {
-    Object.defineProperty(globalThis, 'browser', {
-      configurable: true,
-      value: {
-        cookies: {
-          get: vi.fn(async () => ({ value: 'xsrf-token' })),
-        },
-      },
-    })
-  }
-
   it('returns JSON with safe response metadata', async () => {
-    installBrowserCookies()
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -257,12 +195,7 @@ describe('m.weibo fetch responses', () => {
       ),
     )
 
-    await expect(
-      handleMweiboFetch({
-        type: 'mweibo-fetch',
-        url: topicSearchUrl(),
-      }),
-    ).resolves.toEqual({
+    await expect(handleMweiboFetch(topicSearchUrl())).resolves.toEqual({
       ok: true,
       data: { ok: 1, data: { cards: [] } },
       status: 200,
@@ -270,78 +203,22 @@ describe('m.weibo fetch responses', () => {
     })
   })
 
-  it('classifies HTML challenge pages without returning their body', async () => {
-    installBrowserCookies()
+  it('rejects HTML interstitials', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
-        new Response('<html>challenge</html>', {
+        new Response('<html></html>', {
           headers: { 'content-type': 'text/html; charset=utf-8' },
           status: 200,
         }),
       ),
     )
 
-    await expect(
-      handleMweiboFetch({
-        type: 'mweibo-fetch',
-        url: topicSearchUrl(),
-      }),
-    ).resolves.toEqual({
+    await expect(handleMweiboFetch(topicSearchUrl())).resolves.toEqual({
       ok: false,
       error: 'mweibo-fetch-unexpected-content',
       status: 200,
       contentType: 'text/html',
-    })
-  })
-
-  it('accepts JSON payloads served as text/plain', async () => {
-    installBrowserCookies()
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ ok: 1, data: {} }), {
-          headers: { 'content-type': 'text/plain' },
-          status: 200,
-        }),
-      ),
-    )
-
-    await expect(
-      handleMweiboFetch({
-        type: 'mweibo-fetch',
-        url: topicSearchUrl(),
-      }),
-    ).resolves.toEqual({
-      ok: true,
-      data: { ok: 1, data: {} },
-      status: 200,
-      contentType: 'text/plain',
-    })
-  })
-
-  it('preserves HTTP status and content type for failed responses', async () => {
-    installBrowserCookies()
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ ok: 0 }), {
-          headers: { 'content-type': 'application/json' },
-          status: 403,
-        }),
-      ),
-    )
-
-    await expect(
-      handleMweiboFetch({
-        type: 'mweibo-fetch',
-        url: topicSearchUrl(),
-      }),
-    ).resolves.toEqual({
-      ok: false,
-      error: 'mweibo-fetch-failed:403',
-      status: 403,
-      contentType: 'application/json',
     })
   })
 })

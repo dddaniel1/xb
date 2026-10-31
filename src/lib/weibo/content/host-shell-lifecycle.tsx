@@ -3,6 +3,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { setUiPortalContainer } from '@/components/ui/portal'
 import type { HomeTab } from '@/lib/app-settings'
 import { bindAppSettingsStorageSync, getAppSettingsStore } from '@/lib/app-settings-store'
+import { createShadowRootUi } from '@/lib/platform/shadow-ui'
 import { AppRoot } from '@/lib/weibo/app/app-root'
 import { waitForWeiboHostRegions } from '@/lib/weibo/content/host-selectors'
 import { markWeiboPageReady } from '@/lib/weibo/content/page-takeover'
@@ -40,14 +41,12 @@ export function shouldRedirectInitialHomePage({
 }
 
 export async function mountWeiboHostShell({
-  ctx,
-  sonnerStyles,
+  styles,
+  sonnerStyles = '',
 }: {
-  ctx: Parameters<typeof createShadowRootUi>[0]
-  sonnerStyles: string
-}): Promise<ShadowRootContentScriptUi<MountedWeiboUi> | null> {
-  await injectScript('/weibo-main-world.js', { keepInDom: true })
-
+  styles: string
+  sonnerStyles?: string
+}) {
   const regions = await waitForWeiboHostRegions(document)
   if (!regions) {
     markWeiboPageReady()
@@ -81,36 +80,31 @@ export async function mountWeiboHostShell({
     return null
   }
 
-  const ui = await createShadowRootUi(ctx, {
-    name: 'xb-shell',
-    position: 'inline',
-    anchor: 'body',
-    append: 'first',
-    onMount(container, shadow) {
-      injectSonnerStyles(shadow, sonnerStyles)
-      setUiPortalContainer(container)
-      const cleanupShellState = bindShellState({
-        container: container as unknown as HTMLElement,
-        appRoot: regions.appRoot,
-        settingsStore,
-      })
-      const root = createRoot(container)
-      root.render(<AppRoot />)
-      return {
-        cleanup() {
-          cleanupStorageSync()
-          cleanupShellState()
-        },
-        root,
-      }
-    },
-    onRemove(mounted?: MountedWeiboUi) {
-      setUiPortalContainer(null)
-      mounted?.cleanup()
-      mounted?.root.unmount()
-    },
+  const ui = createShadowRootUi({ name: 'xb-shell-userscript', styles })
+  const { container, shadow } = ui
+
+  injectSonnerStyles(shadow, sonnerStyles)
+  setUiPortalContainer(container)
+
+  const cleanupShellState = bindShellState({
+    container,
+    appRoot: regions.appRoot,
+    settingsStore,
   })
 
-  ui.mount()
-  return ui
+  const root = createRoot(container)
+  root.render(<AppRoot />)
+
+  return {
+    host: ui.host,
+    container,
+    root,
+    cleanup() {
+      cleanupStorageSync()
+      cleanupShellState()
+      setUiPortalContainer(null)
+      root.unmount()
+      ui.remove()
+    },
+  } satisfies MountedWeiboUi & { host: HTMLElement; container: HTMLElement }
 }

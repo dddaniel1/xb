@@ -1,43 +1,34 @@
 {
-  "name": "xb",
-  "version": "1.27.0",
-  "description": "xb enhances your Weibo.com experience",
+  "name": "xb-userscript",
+  "version": "1.27.4",
+  "description": "xb — Redesign Weibo, like X but even better. Tampermonkey userscript.",
   "keywords": [
     "browser",
-    "chrome",
-    "extension",
+    "tampermonkey",
+    "userscript",
     "weibo",
     "xb"
   ],
-  "homepage": "https://xb-extension.vercel.app/",
+  "homepage": "https://github.com/dddaniel1/xb",
   "bugs": {
-    "url": "https://github.com/nnecec/xb/issues"
+    "url": "https://github.com/dddaniel1/xb/issues"
   },
   "license": "GPL-3.0",
   "author": "nnecec <nnecec@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nnecec/xb.git"
+    "url": "https://github.com/dddaniel1/xb.git"
   },
   "type": "module",
   "scripts": {
-    "build": "wxt build",
-    "build:edge": "wxt build -b edge",
-    "build:firefox": "wxt build -b firefox",
+    "build": "vite build",
     "compile": "tsc --noEmit",
-    "dev": "wxt",
-    "dev:edge": "wxt -b edge",
-    "dev:firefox": "wxt -b firefox",
-    "knip": "knip",
-    "lint": "oxfmt --no-error-on-unmatched-pattern && oxlint --fix --no-error-on-unmatched-pattern",
-    "postinstall": "wxt prepare",
-    "preinstall": "npx only-allow bun",
-    "prepare": "husky",
+    "dev": "vite",
+    "lint:check": "oxfmt --no-error-on-unmatched-pattern && oxlint --fix --no-error-on-unmatched-pattern",
+    "preview": "vite preview",
+    "smoke": "node scripts/smoke.mjs",
     "test:unit": "vitest run",
-    "test:watch": "vitest",
-    "zip": "wxt zip",
-    "zip:edge": "wxt zip -b edge",
-    "zip:firefox": "wxt zip -b firefox"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -45,9 +36,9 @@
     "@radix-ui/react-slot": "^1.3.3",
     "@radix-ui/react-visually-hidden": "^1.2.11",
     "@reactuses/core": "^6.5.0",
-    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/query-core": "^5.101.4",
     "@tanstack/react-query": "^5.101.4",
+    "@videojs/core": "10.0.0-beta.26",
     "@videojs/react": "10.0.0-beta.26",
     "axios": "^1.19.0",
     "class-variance-authority": "^0.7.1",
@@ -77,37 +68,22 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@semantic-release/commit-analyzer": "^13.0.1",
-    "@semantic-release/git": "^11.0.1",
-    "@semantic-release/github": "^12.0.9",
-    "@semantic-release/npm": "^13.1.5",
-    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.4",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^4.1.10",
-    "@wxt-dev/module-react": "^1.2.2",
-    "conventional-changelog-conventionalcommits": "9.3.1",
-    "husky": "^9.1.7",
     "jsdom": "^30.0.1",
-    "knip": "^6.32.2",
-    "lint-staged": "^17.3.0",
     "oxfmt": "^0.63.0",
-    "oxlint": "^1.78.0",
-    "semantic-release": "^25.0.9",
+    "oxlint": "1.78.0",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.10",
-    "wxt": "^0.21.4"
+    "vite": "^8.3.5",
+    "vite-plugin-monkey": "^8.1.1",
+    "vitest": "^4.1.10"
   },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,mjs,cjs}": [
-      "oxfmt --no-error-on-unmatched-pattern --write",
-      "oxlint --fix --no-error-on-unmatched-pattern"
-    ],
-    "*.json": "oxfmt --no-error-on-unmatched-pattern --write"
-  },
-  "packageManager": "bun@1.3.14"
+  "packageManager": "pnpm@12.11.2"
 }

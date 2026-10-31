@@ -9,6 +9,7 @@ import { useMutation, useQueries, useQueryClient, type QueryClient } from '@tans
 import { useMemo } from 'react'
 
 import { useAppSettings } from '@/lib/app-settings-store'
+import { gmRequest } from '@/lib/platform/gm'
 import type { FeedItem } from '@/lib/weibo/models/feed'
 import type {
   MyRatingResponse,
@@ -78,16 +79,38 @@ async function xbFetch<T>(
 
   Object.assign(headers, await signXbServerRequest(uid, path))
 
-  const response = await fetch(url, {
+  const body = options?.body !== undefined ? JSON.stringify(options.body) : undefined
+
+  if (typeof GM_xmlhttpRequest === 'function') {
+    // Cross-origin fetch is subject to CORS in a userscript sandbox; GM_xhr is
+    // allowed to talk to the rating server thanks to `@connect`.
+    const response = await gmRequest({ method, url, headers, body, timeoutMs: 15_000 })
+    const text = String(response.response)
+
+    if (response.status < 200 || response.status >= 300) {
+      let errorMsg = `xb-rating-fetch-failed:${response.status}`
+      try {
+        const errorBody = JSON.parse(text) as { error?: string }
+        if (errorBody.error) errorMsg = errorBody.error
+      } catch {
+        // ignore parse error
+      }
+      throw new Error(errorMsg)
+    }
+
+    return JSON.parse(text) as T
+  }
+
+  const fetchResponse = await fetch(url, {
     method,
     headers,
-    ...(options?.body !== undefined && { body: JSON.stringify(options.body) }),
+    ...(body !== undefined && { body }),
   })
 
-  if (!response.ok) {
-    let errorMsg = `xb-rating-fetch-failed:${response.status}`
+  if (!fetchResponse.ok) {
+    let errorMsg = `xb-rating-fetch-failed:${fetchResponse.status}`
     try {
-      const errorBody = (await response.json()) as { error?: string }
+      const errorBody = (await fetchResponse.json()) as { error?: string }
       if (errorBody.error) errorMsg = errorBody.error
     } catch {
       // ignore parse error
@@ -95,8 +118,7 @@ async function xbFetch<T>(
     throw new Error(errorMsg)
   }
 
-  const data = (await response.json()) as T
-  return data
+  return (await fetchResponse.json()) as T
 }
 
 async function getUserRatingSummary(uid: string): Promise<RatingSummary> {

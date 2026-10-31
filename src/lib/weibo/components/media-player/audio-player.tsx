@@ -3,8 +3,6 @@
 import { createPlayer } from '@videojs/react'
 import { Audio, AudioSkin, audioFeatures } from '@videojs/react/audio'
 
-import '@videojs/react/audio/skin.css'
-
 interface AudioPlayerProps {
   src: string
 }

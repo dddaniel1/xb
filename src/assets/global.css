@@ -79,6 +79,7 @@
   --font-fz-kai: 'FZKai-Z03', 'FZ Kai-Z-03', KaiTi, STKaiti, serif;
 }
 
+:host,
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -152,7 +153,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+  :host {
     @apply bg-background text-foreground;
     transition:
       background-color 200ms ease-out,

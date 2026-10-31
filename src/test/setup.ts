@@ -73,3 +73,40 @@ if (!HTMLElement.prototype.hasPointerCapture) {
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = vi.fn()
 }
+
+// Node >= 25 ships an experimental `localStorage` global that is unavailable
+// without `--localstorage-file`. jsdom normally provides one, but the Node
+// getter can win depending on environment. Install a small in-memory Storage
+// so stores that use `localStorage` behave the same everywhere.
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map<string, string>()
+  const storage: Storage = {
+    get length() {
+      return store.size
+    },
+    clear() {
+      store.clear()
+    },
+    getItem(key) {
+      return store.has(key) ? store.get(key)! : null
+    },
+    key(index) {
+      return [...store.keys()][index] ?? null
+    },
+    removeItem(key) {
+      store.delete(key)
+    },
+    setItem(key, value) {
+      store.set(key, String(value))
+    },
+  }
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: storage,
+  })
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: storage,
+  })
+}
