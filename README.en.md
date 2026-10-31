@@ -21,6 +21,8 @@
 xb rewrites weibo.com into a focused, X-style reading experience: no ads, no
 noise, no visual clutter.
 
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-Install-670000)](https://greasyfork.org/en/scripts/603092-xb)
+
 This repository is the **Tampermonkey userscript version** of
 [nnecec/xb](https://github.com/nnecec/xb). The UI, data layer and features are
 the same; the build moved from WXT (Manifest V3 extension) to
